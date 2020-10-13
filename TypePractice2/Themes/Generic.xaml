@@ -74,6 +74,8 @@
     </Style>
 
     <Style TargetType="{x:Type View:MaskedTextBox}">
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="Foreground" Value="{StaticResource ColorTextForeground}"/>
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderThickness" Value="0" />
@@ -86,10 +88,13 @@
                                  Visibility="{Binding RelativeSource={RelativeSource TemplatedParent},Path=BackgroundDisplayVisibility}"
                                  BorderThickness="{TemplateBinding BorderThickness}"
                                  Foreground="{StaticResource ColorLightBlack}"
-                                 IsReadOnly="True" VerticalAlignment="{TemplateBinding VerticalAlignment}"
-                                 HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                                 IsReadOnly="True" 
+                                 VerticalContentAlignment="Center"
+                                 HorizontalContentAlignment="Center"
                                  Text="{Binding RelativeSource={RelativeSource TemplatedParent},Path=BackgroundDisplay}"/>
-                        <Decorator x:Name="PART_ContentHost">
+                        <Decorator x:Name="PART_ContentHost"
+                                   VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                   HorizontalAlignment="Left">
 
                         </Decorator>
                     </Grid>

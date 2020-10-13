@@ -8,6 +8,7 @@ using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.ComTypes;
+using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -450,22 +451,59 @@ namespace TypePractice2.ViewModel {
         /// </summary>
         /// <param name="filePath"></param>
         /// <returns></returns>
-        public static IEnumerable<WordViewModel> ReadFromFile(string filePath) {
+        public static IEnumerable<WordModel> ReadFromFile(string filePath) {
+            string fileExtension = Path.GetExtension(filePath).ToLower();
+            IEnumerable<WordModel> wordList;
+            switch (fileExtension) {
+                case ".json":
+                    wordList = ReadJSON(filePath);
+                    break;
+                case ".txt":
+                    wordList = ReadText(filePath);
+                    break;
+                default:
+                    wordList = ReadText(filePath);
+                    break;
+            }
+            foreach (var word in wordList) {
+                yield return word;
+            }
+        }
+
+        public static IEnumerable<WordModel> ReadJSON(string filePath) {
+            if (!File.Exists(filePath)) {
+                throw new FileNotFoundException(filePath);
+            }
+            List<WordModel> wordList;
+            using (FileStream file = new FileStream(filePath, FileMode.Open, FileAccess.Read)) {
+                DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(List<WordModel>));
+                try {
+                    wordList = serializer.ReadObject(file) as List<WordModel>;
+                }
+                catch {
+                    wordList = new List<WordModel>() { new WordModel() { Source = "YZTXDY", Meaning = "The First Motto" } };
+                }
+
+            }
+            foreach (var word in wordList) {
+                yield return word;
+            }
+        }
+
+        public static IEnumerable<WordModel> ReadText(string filePath) {
             if (!File.Exists(filePath)) {
                 throw new FileNotFoundException($"未找到文件{filePath}");
             }
             using (StreamReader reader = new StreamReader(filePath)) {
                 while (!reader.EndOfStream) {
-                    string currentLilne = reader.ReadLine().Trim();
-                    WordViewModel word;
-                    try {
-                        word = new WordViewModel(currentLilne);
-                    }
-                    catch (ArgumentException) {
+                    var wordData = reader.ReadLine().Trim().Split('#');
+                    if (wordData.Length >= 2) {
+                        yield return new WordModel() { Source = wordData[0], Meaning = wordData[1] };
+                    } else if (wordData.Length >= 1) {
+                        yield return new WordModel() { Source = wordData[0], Meaning = "" };
+                    } else {
                         continue;
                     }
-                    yield return word;
-
                 }
             }
         }

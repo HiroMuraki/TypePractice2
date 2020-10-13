@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Media3D;
+using TypePractice2.Model;
 using TypePractice2.View;
 using TypePractice2.ViewModel;
 
@@ -20,7 +21,7 @@ namespace TypePractice2 {
         private readonly string WordPackPath = Directory.GetCurrentDirectory();
 
         private void Application_Startup(object sender, StartupEventArgs e) {
-            List<WordViewModel> wordList = null;
+            List<WordModel> wordList = null;
             if (e.Args.Length > 0) {
                 foreach (var arg in e.Args) {
                     if (arg.StartsWith("-")) {
@@ -41,7 +42,7 @@ namespace TypePractice2 {
         /// 获取一个单词包
         /// </summary>
         /// <returns></returns>
-        public List<WordViewModel> GetAWordList() {
+        public List<WordModel> GetAWordList() {
             List<string> wordPackList = new List<string>();
             foreach (var file in Directory.GetFiles(WordPackPath)) {
                 string filename = Path.GetFileName(file);
@@ -50,12 +51,12 @@ namespace TypePractice2 {
                 }
             }
 
-            List<WordViewModel> wordList;
+            List<WordModel> wordList;
             if (wordPackList.Count > 0) {
                 string currentFile = wordPackList[new Random().Next(0, wordPackList.Count)];
-                wordList = new List<WordViewModel>(TypeViewModel.ReadFromFile(currentFile));
+                wordList = new List<WordModel>(TypeViewModel.ReadFromFile(currentFile));
             } else {
-                wordList = new List<WordViewModel>() { new WordViewModel(new Model.WordModel() { Source = "YZTXDY", Meaning = "The first Motto" }) };
+                wordList = new List<WordModel>() { new WordModel() { Source = "YZTXDY", Meaning = "The first Motto" } };
             }
             return wordList;
         }
@@ -65,8 +66,8 @@ namespace TypePractice2 {
         /// </summary>
         /// <param name="filepath"></param>
         /// <returns></returns>
-        public List<WordViewModel> GetWordList(string filepath) {
-            return new List<WordViewModel>(TypeViewModel.ReadFromFile(filepath));
+        public List<WordModel> GetWordList(string filepath) {
+            return new List<WordModel>(TypeViewModel.ReadFromFile(filepath));
         }
     }
 }

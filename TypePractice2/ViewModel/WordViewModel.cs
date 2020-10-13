@@ -38,22 +38,6 @@ namespace TypePractice2.ViewModel {
             this._source = source;
             this._meaning = meaning;
         }
-        /// <summary>
-        /// 构造函数，传入一个以#分割源和其含义的字符串
-        /// </summary>
-        /// <param name="wordWithMeaning">以#分割源和其含义的字符串</param>
-        public WordViewModel(string wordWithMeaning) {
-            var T = wordWithMeaning.Split('#');
-            if (T.Length >= 2) {
-                this._source = T[0].Trim();
-                this._meaning = T[1].Trim();
-            } else if(T.Length>=1){
-                this._source = T[0].Trim();
-                this._meaning = "";
-            } else {
-                throw new ArgumentException("单词解析出错");
-            }
-        }
 
         /// <summary>
         /// </summary>
