@@ -1,0 +1,15 @@
+﻿<Application x:Class="TypePractice2.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:TypePractice2"
+             Startup="Application_Startup">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/TypePractice2;component/Resources/Styles/PreSetting.xaml"/>
+                <ResourceDictionary Source="/TypePractice2;component/Resources/Styles/GeneralSliderBarStyle.xaml"/>
+                <ResourceDictionary Source="/TypePractice2;component/Themes/Generic.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

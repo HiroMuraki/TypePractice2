@@ -1,0 +1,7 @@
+# 生成的二进制文件
+TypePractice2/bin/
+# 生成的中间文件
+TypePractice2/obj/
+TypePractice2/Properties/
+# vs隐藏文件
+/.vs

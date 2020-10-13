@@ -1,0 +1,105 @@
+﻿<Window x:Class="TypePractice2.View.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:View="clr-namespace:TypePractice2.View"
+        xmlns:ViewModel="clr-namespace:TypePractice2.ViewModel"
+        xmlns:Converter="clr-namespace:TypePractice2.ViewModel.ValueConverter"
+        mc:Ignorable="d" x:Name="WindowSelf" WindowStartupLocation="CenterScreen"
+        DataContext="{Binding ElementName=WindowSelf,Path=TypePractice}"
+        Title="YZTXDY" MinHeight="240" Height="240" MinWidth="500" Width="500" WindowStyle="None"
+        AllowsTransparency="True" Background="Transparent" KeyDown="Window_KeyDown" MouseWheel="Window_MouseWheel"
+        FocusManager.FocusedElement="{Binding ElementName=InputBox}" FontFamily="Consolas">
+    <WindowChrome.WindowChrome>
+        <WindowChrome UseAeroCaptionButtons="False" CaptionHeight="0" GlassFrameThickness="0"/>
+    </WindowChrome.WindowChrome>
+    <Window.Resources>
+        <Converter:ImmerseModeToVisibility x:Key="ImmerseModeToVisibility"/>
+        <Converter:PracticeStatusToColor x:Key="PracticeStatusToColor"/>
+        <Converter:PracticeStatusToReadOnly x:Key="PracticeStatusToReadOnly"/>
+        <Converter:ListSizeToMaximumValue x:Key="ListSizeToMaximumValue"/>
+        <Converter:PracticeStatusToColor x:Key="GameStatusToColor"/>
+        <Converter:LockModeToColor x:Key="LockModeToColor"/>
+        <Converter:ShuffleModeToColor x:Key="ShuffleModeToColor"/>
+        <Converter:ShuffleModeToTip x:Key="ShuffleModeToTip"/>
+        <Style x:Key="WordTipLabel" TargetType="{x:Type Label}">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="Margin" Value="0,5" />
+            <Setter Property="Foreground" Value="Gray" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="Visibility" Value="{Binding IsImmerseMode,Converter={StaticResource ImmerseModeToVisibility}}" />
+        </Style>
+    </Window.Resources>
+    <Border MouseLeftButtonDown="Window_Move" CornerRadius="15" Background="White"
+            BorderBrush="#f9c53a" BorderThickness="2">
+        <Grid >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="40"/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Label Grid.ColumnSpan="2" Content="{Binding Stars}" HorizontalAlignment="Center" FontSize="20"/>
+                <View:CorneredButton Grid.Column="1" Content="&#x2715;" Background="Transparent" CornerRadius="0,15,0,0"
+                                     Width="30" Height="30" VerticalAlignment="Top" 
+                                     HorizontalAlignment="Right" Click="Window_Close"/>
+            </Grid>
+            <Viewbox Grid.Row="1">
+                <Grid HorizontalAlignment="Center">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Label Grid.Row="0" Content="{Binding PreviousWord.Source}"
+                           Style="{StaticResource WordTipLabel}"/>
+                    <View:MaskedTextBox Grid.Row="1" x:Name="InputBox" FontSize="40"
+                                        IsReadOnly="{Binding PracticeStatus,Converter={StaticResource PracticeStatusToReadOnly}}"
+                                        VerticalAlignment="Center"
+                                        BackgroundDisplayVisibility="{Binding IsImmerseMode,Converter={StaticResource ImmerseModeToVisibility}}"
+                                        BackgroundDisplay="{Binding CurrentWord.Source,Mode=OneWay}"
+                                        Text="{Binding CurrentInput,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                                        TextChanged="UserInput_TextChanged"/>
+                    <Label Grid.Row="2" Content="{Binding NextWord.Source}"
+                           Style="{StaticResource WordTipLabel}"/>
+                </Grid>
+            </Viewbox>
+            <Grid Grid.Row="2" Height="30"
+                  Visibility="{Binding IsImmerseMode,Converter={StaticResource ImmerseModeToVisibility}}">
+                <Slider Margin="15,0" VerticalAlignment="Center" 
+                        Style="{StaticResource GeneralSliderBar}"
+                        ToolTip="{Binding Process}"
+                        Value="{Binding CurrentIndex,Mode=TwoWay}"
+                        Minimum="0" Maximum="{Binding Size,Converter={StaticResource ListSizeToMaximumValue}}"/>
+            </Grid>
+            <Grid Grid.Row="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <View:CorneredToggleButton Grid.Column="0" Width="100" CornerRadius="0,15,0,15" FontSize="14" FontFamily="Microsoft YaHei UI"
+                                           Content="{Binding IsShuffleMode,Converter={StaticResource ShuffleModeToTip}}"
+                                           IsChecked="{Binding IsShuffleMode,Mode=TwoWay}" ToolTip="点击切换模式"
+                                           Foreground="White"
+                                           Background="{Binding IsShuffleMode,Converter={StaticResource ShuffleModeToColor}}"/>
+                <Label Grid.Column="1" FontSize="20" IsHitTestVisible="False" 
+                       Content="{Binding CurrentWord.Meaning,Mode=OneWay}" 
+                       VerticalAlignment="Center" HorizontalAlignment="Center"
+                       FontFamily="Microsoft YaHei UI"/>
+                <View:CorneredToggleButton Grid.Column="2" Width="100" CornerRadius="15,0,15,0" FontSize="14" FontFamily="Microsoft YaHei UI"
+                                           Content="{Binding Process}" ToolTip="点击锁定单词"
+                                           IsChecked="{Binding IsLockMode,Mode=TwoWay}" 
+                                           Foreground="White"
+                                           Background="{Binding PracticeStatus,Converter={StaticResource PracticeStatusToColor}}"/>
+            </Grid>
+        </Grid>
+    </Border>
+</Window>
